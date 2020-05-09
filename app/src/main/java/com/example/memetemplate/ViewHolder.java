@@ -40,11 +40,11 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     public void setDetails(Context ctx, String title, String description, String image){
         //Views
         TextView mTitleTv = mView.findViewById(R.id.rTitleTv);
-        TextView mDetailTv = mView.findViewById(R.id.rDescriptionTv);
+        //TextView mDetailTv = mView.findViewById(R.id.rDescriptionTv);
         ImageView mImageIv = mView.findViewById(R.id.rImageView);
         //set data to views
         mTitleTv.setText(title);
-        mDetailTv.setText(description);
+        //mDetailTv.setText(description);
         Picasso.get().load(image).into(mImageIv);
     }
 

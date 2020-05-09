@@ -101,11 +101,11 @@ public class MainActivity extends AppCompatActivity {
                             public void onItemClick(View view, int position) {
                                 //Views
                                 TextView mTitleTv = view.findViewById(R.id.rTitleTv);
-                                TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
+                                //TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
                                 ImageView mImageView = view.findViewById(R.id.rImageView);
                                 //get data from views
                                 String mTitle = mTitleTv.getText().toString();
-                                String mDesc = mDescTv.getText().toString();
+                                //String mDesc = mDescTv.getText().toString();
                                 Drawable mDrawable = mImageView.getDrawable();
                                 Bitmap mBitmap = ((BitmapDrawable) mDrawable).getBitmap();
 
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                                 byte[] bytes = stream.toByteArray();
                                 intent.putExtra("image", bytes); //put bitmap image as array of bytes
                                 intent.putExtra("title", mTitle); // put title
-                                intent.putExtra("description", mDesc); //put description
+                                //intent.putExtra("description", mDesc); //put description
                                 startActivity(intent); //start activity
 
                             }
@@ -164,11 +164,11 @@ public class MainActivity extends AppCompatActivity {
                             public void onItemClick(View view, int position) {
                                 //Views
                                 TextView mTitleTv = view.findViewById(R.id.rTitleTv);
-                                TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
+                                //TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
                                 ImageView mImageView = view.findViewById(R.id.rImageView);
                                 //get data from views
                                 String mTitle = mTitleTv.getText().toString();
-                                String mDesc = mDescTv.getText().toString();
+                                //String mDesc = mDescTv.getText().toString();
                                 Drawable mDrawable = mImageView.getDrawable();
                                 Bitmap mBitmap = ((BitmapDrawable) mDrawable).getBitmap();
 
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                                 byte[] bytes = stream.toByteArray();
                                 intent.putExtra("image", bytes); //put bitmap image as array of bytes
                                 intent.putExtra("title", mTitle); // put title
-                                intent.putExtra("description", mDesc); //put description
+                                //intent.putExtra("description", mDesc); //put description
                                 startActivity(intent); //start activity
 
 

@@ -4,37 +4,53 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/tools"
     card_view:BackgroundColor="#fff"
-    card_view:CornerRadius="3dp"
+    card_view:CornerRadius="10dp"
     card_view:contentPadding="5dp"
     card_view:Elevation = "3dp"
-    card_view:UseCompatPadding="true">
+    card_view:UseCompatPadding="true"
+    >
 
-    <LinearLayout
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/rTitleTv"
-            android:text="Title"
-            android:textColor="#000"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:orientation="vertical"
+        >
         <ImageView
             android:id="@+id/rImageView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_rowSpan = "1"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_width="150dp"
+            android:layout_height="110dp"
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="7dp"
             android:background="@drawable/loadingimage"/>
-        <TextView
-            android:id="@+id/rDescriptionTv"
-            android:text="This will be the description of the post"
-            android:textSize="20sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/rTitleTv"
+            android:layout_width="220dp"
+            android:layout_height="match_parent"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="MEME Name"
+            android:textColor="#000"
+            android:textSize="17dp"
+            android:textStyle="bold"
+            />
+
+    </GridLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/background_dark"
+        android:layout_gravity="bottom"
+        />
 
 </androidx.cardview.widget.CardView>
