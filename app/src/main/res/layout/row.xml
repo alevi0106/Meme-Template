@@ -3,9 +3,9 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/tools"
-    card_view:BackgroundColor="#fff"
+    app:cardBackgroundColor="@color/cardview_dark_background"
     card_view:CornerRadius="10dp"
-    card_view:contentPadding="5dp"
+    card_view:contentPadding="2dp"
     card_view:Elevation = "3dp"
     card_view:UseCompatPadding="true"
     >
@@ -20,36 +20,36 @@
             android:layout_rowSpan = "1"
             android:layout_row="0"
             android:layout_column="0"
-            android:layout_width="150dp"
-            android:layout_height="110dp"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
-            android:layout_marginLeft="7dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginRight="7dp"
-            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/loadingimage"/>
 
 
         <TextView
             android:id="@+id/rTitleTv"
-            android:layout_width="220dp"
+            android:layout_width="265dp"
             android:layout_height="match_parent"
             android:layout_row="0"
             android:layout_column="1"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="MEME Name"
-            android:textColor="#000"
-            android:textSize="17dp"
-            android:textStyle="bold"
+            android:layout_marginLeft="5dp"
+            android:text="Meme Name"
+            android:textColor="#fff"
+            android:textSize="15dp"
+            android:fontFamily="serif"
             />
 
     </GridLayout>
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@android:color/background_dark"
+        android:layout_height="0.5dp"
+        android:background="@android:color/background_light"
         android:layout_gravity="bottom"
         />
 
