@@ -22,6 +22,11 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -33,11 +38,21 @@ public class HomeActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mRef;
+    private AdView mAdView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("01A52AC1C81DB7346FE6FCABE563A6B0").build();
+        mAdView.loadAd(adRequest);
         ActionBar actionBar = getSupportActionBar();
         //set title
         mSharedPref = getSharedPreferences("SortSettings", MODE_PRIVATE);
