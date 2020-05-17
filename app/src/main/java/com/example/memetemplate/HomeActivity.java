@@ -6,12 +6,15 @@ import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import android.view.Menu;
@@ -70,23 +73,30 @@ public class HomeActivity extends AppCompatActivity {
             mLayoutManager.setStackFromEnd(false);
         }
 
-        //RecyclerView
-        mRecyclerView = findViewById(R.id.recyclerView);
-        mRecyclerView.setHasFixedSize(true);
+        if ( ConnectionUtils.isConnected(this)){
+            //RecyclerView
+            mRecyclerView = findViewById(R.id.recyclerView);
+            mRecyclerView.setHasFixedSize(true);
 
-        //set layout as LinearLayout
-        mRecyclerView.setLayoutManager(mLayoutManager);
+            //set layout as LinearLayout
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //send Query to FirebaseDatabase
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mRef = mFirebaseDatabase.getReference("Data");
+            //send Query to FirebaseDatabase
+            mFirebaseDatabase = FirebaseDatabase.getInstance();
+            mRef = mFirebaseDatabase.getReference("Data");
+        }
+        else{
+            Intent intent = new Intent(HomeActivity.this, InternetActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
     }
 
     private void firebaseSearch(String searchText) {
 
         //convert string entered in SearchView to lowercase
-        String query = searchText.toLowerCase();
+        String query = searchText.toUpperCase();
 
         Query firebaseSearchQuery = mRef.orderByChild("search").startAt(query).endAt(query + "\uf8ff");
 
@@ -97,7 +107,7 @@ public class HomeActivity extends AppCompatActivity {
                         ViewHolder.class,
                         firebaseSearchQuery
                 ) {
-                    @Override
+                @Override
                     protected void populateViewHolder(ViewHolder viewHolder, Model model, int position) {
                         viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage());
                     }
