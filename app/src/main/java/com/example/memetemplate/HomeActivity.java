@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -93,6 +95,21 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
     private void firebaseSearch(String searchText) {
 
         //convert string entered in SearchView to lowercase
@@ -128,8 +145,9 @@ public class HomeActivity extends AppCompatActivity {
                                 String mTitle = mTitleTv.getText().toString();
                                 //String mDesc = mDescTv.getText().toString();
                                 Drawable mDrawable = mImageView.getDrawable();
-                                Bitmap mBitmap = ((BitmapDrawable) mDrawable).getBitmap();
 
+                                Bitmap mBit = ((BitmapDrawable) mDrawable).getBitmap();
+                                Bitmap mBitmap = getResizedBitmap(mBit, 500);
                                 //pass this data to new activity
                                 Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -183,26 +201,30 @@ public class HomeActivity extends AppCompatActivity {
                         viewHolder.setOnClickListener(new ViewHolder.ClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-                                //Views
-                                TextView mTitleTv = view.findViewById(R.id.rTitleTv);
-                                //TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
-                                ImageView mImageView = view.findViewById(R.id.rImageView);
-                                //get data from views
-                                String mTitle = mTitleTv.getText().toString();
-                                //String mDesc = mDescTv.getText().toString();
-                                Drawable mDrawable = mImageView.getDrawable();
-                                Bitmap mBitmap = ((BitmapDrawable) mDrawable).getBitmap();
-
-                                //pass this data to new activity
-                                Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
-                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                byte[] bytes = stream.toByteArray();
-                                intent.putExtra("image", bytes); //put bitmap image as array of bytes
-                                intent.putExtra("title", mTitle); // put title
-                                //intent.putExtra("description", mDesc); //put description
-                                startActivity(intent); //start activity
-
+                                try{
+                                    //Views
+                                    TextView mTitleTv = view.findViewById(R.id.rTitleTv);
+                                    //TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
+                                    ImageView mImageView = view.findViewById(R.id.rImageView);
+                                    //get data from views
+                                    String mTitle = mTitleTv.getText().toString();
+                                    //String mDesc = mDescTv.getText().toString();
+                                    Drawable mDrawable = mImageView.getDrawable();
+                                    Bitmap mBit = ((BitmapDrawable) mDrawable).getBitmap();
+                                    Bitmap mBitmap = getResizedBitmap(mBit, 500);
+                                    //pass this data to new activity
+                                    Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
+                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                    mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    byte[] bytes = stream.toByteArray();
+                                    intent.putExtra("image", bytes); //put bitmap image as array of bytes
+                                    intent.putExtra("title", mTitle); // put title
+                                    //intent.putExtra("description", mDesc); //put description
+                                    startActivity(intent); //start activity
+                                }
+                                catch(Exception e){
+                                    Toast.makeText(HomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
 
                             }
 

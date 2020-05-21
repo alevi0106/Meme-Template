@@ -6,13 +6,23 @@
     >
 
     <TextView
-        android:id="@+id/internet_text"
+        android:id="@+id/internet_text1"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:gravity="center"
-        android:text="Turn ON Internet connection                           and press reload button"
+        android:text="Turn ON Internet Connection."
         android:textColor="#fff"
-        android:textSize="20dp"
+        android:textSize="20sp"
+        />
+    <TextView
+        android:id="@+id/internet_text2"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:text="Then press RELOAD button."
+        android:layout_below="@+id/internet_text1"
+        android:textColor="#fff"
+        android:textSize="20sp"
         />
     <Button
         android:id="@+id/reload_btn"
@@ -20,7 +30,7 @@
         android:layout_height="50dp"
         android:layout_centerInParent="true"
         android:background="@drawable/action_reload"
-        android:layout_below="@+id/internet_text"
+        android:layout_below="@+id/internet_text2"
         android:onClick="onClickReloadBtn" />
 
     <ImageView
@@ -28,6 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/no_internet_templete"
+        android:contentDescription="Nothing"
         />
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
