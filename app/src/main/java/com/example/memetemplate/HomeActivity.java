@@ -205,7 +205,7 @@ public class HomeActivity extends AppCompatActivity {
                                     //Views
                                     TextView mTitleTv = view.findViewById(R.id.rTitleTv);
                                     //TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
-                                    ImageView mImageView = view.findViewById(R.id.rImageView);
+                                     ImageView mImageView = view.findViewById(R.id.rImageView);
                                     //get data from views
                                     String mTitle = mTitleTv.getText().toString();
                                     //String mDesc = mDescTv.getText().toString();
@@ -223,7 +223,7 @@ public class HomeActivity extends AppCompatActivity {
                                     startActivity(intent); //start activity
                                 }
                                 catch(Exception e){
-                                    Toast.makeText(HomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(HomeActivity.this, "Wait for image to load!", Toast.LENGTH_SHORT).show();
                                 }
 
                             }
