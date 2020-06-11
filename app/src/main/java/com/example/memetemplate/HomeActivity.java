@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -149,7 +150,7 @@ public class HomeActivity extends AppCompatActivity {
                                 Bitmap mBit = ((BitmapDrawable) mDrawable).getBitmap();
                                 Bitmap mBitmap = getResizedBitmap(mBit, 500);
                                 //pass this data to new activity
-                                Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
+                                Intent intent = new Intent(view.getContext(), ImageEditor.class);
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                 mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                                 byte[] bytes = stream.toByteArray();
@@ -213,7 +214,7 @@ public class HomeActivity extends AppCompatActivity {
                                     Bitmap mBit = ((BitmapDrawable) mDrawable).getBitmap();
                                     Bitmap mBitmap = getResizedBitmap(mBit, 500);
                                     //pass this data to new activity
-                                    Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
+                                    Intent intent = new Intent(view.getContext(), ImageEditor.class);
                                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                     mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                                     byte[] bytes = stream.toByteArray();
