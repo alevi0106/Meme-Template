@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="16dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Top Border: "
+        android:id="@+id/TopText"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        android:layout_gravity="left"
+        android:textSize="20sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/TopTextValue"
+        android:text="0"
+        android:layout_toRightOf="@+id/TopText"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp" />
+    <SeekBar
+        android:id="@+id/top_seek_bar"
+        android:layout_below="@+id/TopText"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="2dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bottom Border: "
+        android:id="@+id/BottomText"
+        android:layout_below="@+id/top_seek_bar"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        android:layout_gravity="left"
+        android:textSize="20sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/top_seek_bar"
+        android:id="@+id/BottomTextValue"
+        android:text="0"
+        android:layout_toRightOf="@+id/BottomText"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp" />
+    <SeekBar
+        android:id="@+id/bottom_seek_bar"
+        android:layout_below="@+id/BottomText"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="2dp"
+        />
+</RelativeLayout>
