@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,8 +24,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -35,6 +42,7 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
     ImageView imView;
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
     Bitmap final_image;
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,14 +50,82 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         imView = findViewById(R.id.imageView);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Edit");
-        //set back button in action bar
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setDisplayShowHomeEnabled(true);
-
         byte[] bytes = getIntent().getByteArrayExtra("image");
         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         imView.setImageBitmap(bmp);
         final_image = ((BitmapDrawable)imView.getDrawable()).getBitmap();
+        EditText inputBox = findViewById(R.id.image_edit_text);
+        final String textString = inputBox.getText().toString();
+        final TextView textView = findViewById(R.id.image_text);
+        Button submit_btn = findViewById(R.id.submit);
+        submit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textView.setText(textString);
+
+                textView.setOnTouchListener(new View.OnTouchListener() {
+                    float lastX = 0, lastY = 0;
+
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getAction()) {
+                            case (MotionEvent.ACTION_DOWN):
+                                lastX = event.getX();
+                                lastY = event.getY();
+
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                float dx = event.getX() - lastX;
+                                float dy = event.getY() - lastY;
+                                float finalX = v.getX() + dx;
+                                float finalY = v.getY() + dy + v.getHeight();
+                                v.setX(finalX);
+                                v.setY(finalY);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Discard Changes?");
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                            PackageManager.PERMISSION_DENIED){
+                        String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        //show popup to grant permission
+                        requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
+                    }
+                    else {
+                        //permission already granted, save image
+                        saveImage();
+                    }
+                }
+                else {
+                    //System os is < marshmallow, save image
+                    saveImage();
+                }
+                BotttomSheet.set_pixel_value();
+                ImageEditor.super.onBackPressed();
+            }
+        });
+        builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                BotttomSheet.set_pixel_value();
+                ImageEditor.super.onBackPressed();
+            }
+        });
+        builder.show();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,22 +141,30 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
             botttomSheet.show(getSupportFragmentManager(), "Bottom Sheet");
             return true;
         case R.id.save_image:
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                        PackageManager.PERMISSION_DENIED){
-                    String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                    //show popup to grant permission
-                    requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Download?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+                            String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                            requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
+                        }
+                        else {
+                            saveImage();
+                        }
+                    }
+                    else {
+                        saveImage();
+                    }
+                    ImageEditor.super.onBackPressed();
                 }
-                else {
-                    //permission already granted, save image
-                    saveImage();
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
                 }
-            }
-            else {
-                //System os is < marshmallow, save image
-                saveImage();
-            }
+            });
+            builder.show();
             return true;
         case R.id.share_image:
             shareImage();

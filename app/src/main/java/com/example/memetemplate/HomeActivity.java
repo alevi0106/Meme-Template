@@ -138,27 +138,31 @@ public class HomeActivity extends AppCompatActivity {
                         viewHolder.setOnClickListener(new ViewHolder.ClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-                                //Views
-                                TextView mTitleTv = view.findViewById(R.id.rTitleTv);
-                                //TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
-                                ImageView mImageView = view.findViewById(R.id.rImageView);
-                                //get data from views
-                                String mTitle = mTitleTv.getText().toString();
-                                //String mDesc = mDescTv.getText().toString();
-                                Drawable mDrawable = mImageView.getDrawable();
+                                try {
+                                    //Views
+                                    TextView mTitleTv = view.findViewById(R.id.rTitleTv);
+                                    //TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
+                                    ImageView mImageView = view.findViewById(R.id.rImageView);
+                                    //get data from views
+                                    String mTitle = mTitleTv.getText().toString();
+                                    //String mDesc = mDescTv.getText().toString();
+                                    Drawable mDrawable = mImageView.getDrawable();
 
-                                Bitmap mBit = ((BitmapDrawable) mDrawable).getBitmap();
-                                Bitmap mBitmap = getResizedBitmap(mBit, 500);
-                                //pass this data to new activity
-                                Intent intent = new Intent(view.getContext(), ImageEditor.class);
-                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                byte[] bytes = stream.toByteArray();
-                                intent.putExtra("image", bytes); //put bitmap image as array of bytes
-                                intent.putExtra("title", mTitle); // put title
-                                //intent.putExtra("description", mDesc); //put description
-                                startActivity(intent); //start activity
-
+                                    Bitmap mBit = ((BitmapDrawable) mDrawable).getBitmap();
+                                    Bitmap mBitmap = getResizedBitmap(mBit, 500);
+                                    //pass this data to new activity
+                                    Intent intent = new Intent(view.getContext(), ImageEditor.class);
+                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                    mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    byte[] bytes = stream.toByteArray();
+                                    intent.putExtra("image", bytes); //put bitmap image as array of bytes
+                                    intent.putExtra("title", mTitle); // put title
+                                    //intent.putExtra("description", mDesc); //put description
+                                    startActivity(intent); //start activity
+                                }
+                                catch(Exception e){
+                                    Toast.makeText(HomeActivity.this, "Wait for image to load!", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             @Override
@@ -313,6 +317,23 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
                 });
+        builder.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Are you sure want to exit?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                HomeActivity.super.onBackPressed();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
         builder.show();
     }
 }

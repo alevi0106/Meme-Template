@@ -81,4 +81,8 @@ public class BotttomSheet extends BottomSheetDialogFragment {
                     + " must implement BottomSheetListener");
         }
     }
+    public static void set_pixel_value(){
+        top_value = 0;
+        bottom_value = 0;
+    }
 }
