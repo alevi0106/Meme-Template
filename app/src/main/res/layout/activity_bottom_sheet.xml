@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:padding="16dp">
+    android:padding="25dp">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,7 +17,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/TopTextValue"
-        android:text="0"
         android:layout_toRightOf="@+id/TopText"
         android:textStyle="bold"
         android:textColor="@color/colorAccent"
@@ -29,7 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="5dp"
+        android:max ="15"
         />
     <TextView
         android:layout_width="wrap_content"
@@ -46,7 +46,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/top_seek_bar"
         android:id="@+id/BottomTextValue"
-        android:text="0"
         android:layout_toRightOf="@+id/BottomText"
         android:textStyle="bold"
         android:textColor="@color/colorAccent"
@@ -58,6 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="5dp"
+        android:max ="15"
         />
 </RelativeLayout>

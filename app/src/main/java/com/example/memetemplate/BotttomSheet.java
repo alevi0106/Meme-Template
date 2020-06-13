@@ -15,18 +15,26 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class BotttomSheet extends BottomSheetDialogFragment {
     private BottomSheetListener mListener;
     SeekBar topsbar, bottomsbar;
+    TextView t1,t2;
+    private static int top_value=0,bottom_value=0;
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.activity_bottom_sheet, container, false);
         topsbar = v.findViewById(R.id.top_seek_bar);
         bottomsbar = v.findViewById(R.id.bottom_seek_bar);
+        topsbar.setProgress(top_value);
+        bottomsbar.setProgress(bottom_value);
+        t1 = v.findViewById(R.id.TopTextValue);
+        t2 = v.findViewById(R.id.BottomTextValue);
+        t1.setText(String.valueOf(top_value));
+        t2.setText(String.valueOf(bottom_value));
         topsbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                TextView t1 = v.findViewById(R.id.TopTextValue);
-                t1.setText(String.valueOf(progress));
-                mListener.onTopSeekbarChanged(progress);
+                top_value = progress;
+                t1.setText(String.valueOf(top_value));
+                mListener.onSeekbarChanged(top_value, bottom_value);
 //                dismiss();
             }
 
@@ -43,9 +51,9 @@ public class BotttomSheet extends BottomSheetDialogFragment {
         bottomsbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                TextView t2 = v.findViewById(R.id.BottomTextValue);
-                t2.setText(String.valueOf(progress));
-                mListener.onBottomSeekbarChanged(progress);
+                bottom_value = progress;
+                t2.setText(String.valueOf(bottom_value));
+                mListener.onSeekbarChanged(top_value,bottom_value);
             }
 
             @Override
@@ -61,8 +69,7 @@ public class BotttomSheet extends BottomSheetDialogFragment {
         return v;
     }
     public interface BottomSheetListener {
-        void onTopSeekbarChanged(int progress);
-        void onBottomSeekbarChanged(int progress);
+        void onSeekbarChanged(int top_progress, int bottom_seekbar);
     }
     @Override
     public void onAttach(Context context) {

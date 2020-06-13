@@ -2,8 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-    android:id="@+id/add_border"
-    android:icon="@drawable/ic_add_border"
-    app:showAsAction="always"
-    android:title="Add Border"/>
+        android:id="@+id/add_border"
+        android:icon="@drawable/ic_add_border"
+        app:showAsAction="always"
+        android:title="Add Border"/>
+    <item
+        android:id="@+id/share_image"
+        android:icon="@drawable/ic_action_share"
+        app:showAsAction="always"
+        android:title="Share Image"/>
+    <item
+        android:id="@+id/save_image"
+        android:icon="@drawable/ic_action_save"
+        app:showAsAction="always"
+        android:title="Save Image"/>
 </menu>
