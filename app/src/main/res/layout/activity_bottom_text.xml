@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="25dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter Text:"
+        android:id="@+id/EnterText"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        android:layout_gravity="left"
+        android:textSize="20sp" />
+    <EditText
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:id="@+id/image_edit_text"
+        android:layout_below="@+id/EnterText"
+        android:background="@drawable/rounded_edit_text"
+        />
+    <ImageButton
+        android:id="@+id/submit_text"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/round_btn"
+        android:scaleType="fitCenter"
+        android:src="@drawable/round_ok" />
+</RelativeLayout>

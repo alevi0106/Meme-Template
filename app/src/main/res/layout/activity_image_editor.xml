@@ -5,31 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorAccent"
-    tools:context=".ImageEditor">
+    tools:context=".ImageEditor"
+    android:id="@+id/image_editor_layout">
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="600dp"
-        android:layout_marginBottom="76dp"
+        android:layout_marginBottom="80dp"
         app:srcCompat="@drawable/loadingimage" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/image_text"
-        android:layout_centerInParent="true"/>
-    <EditText
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/image_edit_text"
-        android:text="Caption"/>
-    <Button
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:id="@+id/submit"
+    <ImageButton
+        android:id="@+id/add_text"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
         android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/image_edit_text"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/round_btn"
+        android:scaleType="fitCenter"
+        android:src="@drawable/round_text" />
 
 </RelativeLayout>

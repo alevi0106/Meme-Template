@@ -22,13 +22,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,15 +41,18 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class ImageEditor extends AppCompatActivity implements BotttomSheet.BottomSheetListener{
+public class ImageEditor extends AppCompatActivity implements BotttomSheet.BottomSheetListener, BottomText.BottomTextListener {
     ImageView imView;
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
     Bitmap final_image;
-    @SuppressLint("ClickableViewAccessibility")
+    TextView[] tv = new TextView[100];
+    static int tv_id = 0;
+    RelativeLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_editor);
+        layout = findViewById(R.id.image_editor_layout);
         imView = findViewById(R.id.imageView);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Edit");
@@ -54,39 +60,13 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         imView.setImageBitmap(bmp);
         final_image = ((BitmapDrawable)imView.getDrawable()).getBitmap();
-        EditText inputBox = findViewById(R.id.image_edit_text);
-        final String textString = inputBox.getText().toString();
-        final TextView textView = findViewById(R.id.image_text);
-        Button submit_btn = findViewById(R.id.submit);
-        submit_btn.setOnClickListener(new View.OnClickListener() {
+
+        ImageButton add_text_btn = findViewById(R.id.add_text);
+        add_text_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textView.setText(textString);
-
-                textView.setOnTouchListener(new View.OnTouchListener() {
-                    float lastX = 0, lastY = 0;
-
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        switch (event.getAction()) {
-                            case (MotionEvent.ACTION_DOWN):
-                                lastX = event.getX();
-                                lastY = event.getY();
-
-                                break;
-                            case MotionEvent.ACTION_MOVE:
-                                float dx = event.getX() - lastX;
-                                float dy = event.getY() - lastY;
-                                float finalX = v.getX() + dx;
-                                float finalY = v.getY() + dy + v.getHeight();
-                                v.setX(finalX);
-                                v.setY(finalY);
-                                break;
-                        }
-                        return true;
-                    }
-                });
-
+                BottomText bottomText = new BottomText();
+                bottomText.show(getSupportFragmentManager(), "Bottom Text");
             }
         });
 
@@ -262,5 +242,42 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         tCanvas.drawRoundRect(new RectF(0, bmp.getHeight()+top_progress, bmp.getWidth(), bmp.getHeight()+top_progress+bottom_progress),2,2,p);
         imView.setImageBitmap(temp);
         final_image = temp;
+    }
+
+    @Override
+    @SuppressLint("ClickableViewAccessibility")
+    public void onTextAdded(String textString){
+        tv_id += 1;
+        tv[tv_id] = new TextView(ImageEditor.this);
+        tv[tv_id].setText(textString);
+        tv[tv_id].setTextSize((float) 20);
+        tv[tv_id].setPadding(20, 50, 20, 50);
+        tv[tv_id].setGravity(Gravity.CENTER);
+        layout.addView(tv[tv_id]);
+//                textView.setText(textString);
+//                layout.addView(textView);
+        tv[tv_id].setOnTouchListener(new View.OnTouchListener() {
+            float lastX = 0, lastY = 0;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case (MotionEvent.ACTION_DOWN):
+                        lastX = event.getX();
+                        lastY = event.getY();
+
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        float dx = event.getX() - lastX;
+                        float dy = event.getY() - lastY;
+                        float finalX = v.getX() + dx;
+                        float finalY = v.getY() + dy + v.getHeight();
+                        v.setX(finalX);
+                        v.setY(finalY);
+                        break;
+                }
+                return true;
+            }
+        });
     }
 }
