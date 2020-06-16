@@ -17,6 +17,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -48,11 +49,14 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
     TextView[] tv = new TextView[100];
     static int tv_id = 0;
     RelativeLayout layout;
+    RelativeLayout.LayoutParams params;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_editor);
         layout = findViewById(R.id.image_editor_layout);
+        params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
         imView = findViewById(R.id.imageView);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Edit");
@@ -251,11 +255,12 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         tv[tv_id] = new TextView(ImageEditor.this);
         tv[tv_id].setText(textString);
         tv[tv_id].setTextSize((float) 20);
-        tv[tv_id].setPadding(20, 50, 20, 50);
-        tv[tv_id].setGravity(Gravity.CENTER);
+        tv[tv_id].setLayoutParams(params);
+        tv[tv_id].setTypeface(Typeface.DEFAULT_BOLD);
+//        tv[tv_id].setPadding(20, 50, 20, 50);
+        //tv[tv_id].setGravity(Gravity.Left);
+        tv[tv_id].setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         layout.addView(tv[tv_id]);
-//                textView.setText(textString);
-//                layout.addView(textView);
         tv[tv_id].setOnTouchListener(new View.OnTouchListener() {
             float lastX = 0, lastY = 0;
 
