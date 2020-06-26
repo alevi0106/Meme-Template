@@ -16,9 +16,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -48,13 +51,15 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
     Bitmap final_image;
     TextView[] tv = new TextView[100];
     static int tv_id = 0;
-    RelativeLayout layout;
+    FrameLayout canvas;
     RelativeLayout.LayoutParams params;
+    ImageButton add_text_btn;
+    int btn_state = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_editor);
-        layout = findViewById(R.id.image_editor_layout);
+        canvas = findViewById(R.id.image_editor_layout);
         params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         imView = findViewById(R.id.imageView);
@@ -64,13 +69,49 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         imView.setImageBitmap(bmp);
         final_image = ((BitmapDrawable)imView.getDrawable()).getBitmap();
+        StickerTextView tv_sticker = new StickerTextView(ImageEditor.this);
+        tv_sticker.setText("nkDroid");
+        canvas.addView(tv_sticker);
 
-        ImageButton add_text_btn = findViewById(R.id.add_text);
+        add_text_btn = findViewById(R.id.add_text);
         add_text_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BottomText bottomText = new BottomText();
-                bottomText.show(getSupportFragmentManager(), "Bottom Text");
+                if(btn_state == 0) {
+                    BottomText bottomText = new BottomText();
+                    bottomText.show(getSupportFragmentManager(), "Bottom Text");
+                }
+                else if(btn_state == 1){
+                    btn_state = 0;
+                    Bitmap bmp = ((BitmapDrawable)imView.getDrawable()).getBitmap();
+                    Bitmap temp = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), Bitmap.Config.RGB_565);
+                    Canvas tCanvas = new Canvas(temp);
+                    tCanvas.drawBitmap(bmp, 0, 0, null);
+//                    int[] location = new int[2];
+//                    tv[tv_id].getLocationOnScreen(location);
+//                    int x = location[0];
+//                    tv[tv_id].setDrawingCacheEnabled(true);
+//                    Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+//                    p.setStyle(Paint.Style.FILL);
+//                    p.setColor(Color.BLACK);
+//                    p.setTextSize(20);
+//                    Bitmap bmpText = Bitmap.createBitmap(tv[tv_id].getDrawingCache());
+//                    tCanvas.drawBitmap(bmpText, x, 0,p);
+//                    Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+//                    p.setStyle(Paint.Style.FILL);
+//                    p.setColor(Color.WHITE);
+//                    p.setTextSize(20);
+//                    Rect rectText = new Rect();
+//                    String caption = tv[tv_id].getText().toString();
+//                    p.getTextBounds(caption, 0, caption.length(), rectText);
+//                    int[] location = new int[2];
+//                    location[0] = (int) imView.getRight();
+//                    location[1] = (int) imView.getBottom();
+//                    Toast.makeText(ImageEditor.this,"Image X:"+String.valueOf(location[0])+"Y:"+String.valueOf(location[1]),Toast.LENGTH_SHORT).show();
+//                    tCanvas.drawText(caption, 0, rectText.height(), p);
+                    imView.setImageBitmap(temp);
+                    add_text_btn.setImageResource(R.drawable.round_text);
+                }
             }
         });
 
@@ -230,8 +271,6 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
     public void onSeekbarChanged(int top_progress, int bottom_progress) {
         byte[] bytes = getIntent().getByteArrayExtra("image");
         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//        BitmapDrawable drawable = (BitmapDrawable)imView.getDrawable();
-//        Bitmap bmp = drawable.getBitmap();
         Paint p = new Paint();
         p.setAntiAlias(true);
         p.setStyle(Paint.Style.FILL);
@@ -259,8 +298,12 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         tv[tv_id].setTypeface(Typeface.DEFAULT_BOLD);
 //        tv[tv_id].setPadding(20, 50, 20, 50);
         //tv[tv_id].setGravity(Gravity.Left);
-        tv[tv_id].setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        layout.addView(tv[tv_id]);
+        tv[tv_id].setTextColor(getResources().getColor(R.color.colorPrimary));
+        canvas.addView(tv[tv_id]);
+        if(btn_state == 0){
+            btn_state = 1;
+            add_text_btn.setImageResource(R.drawable.round_ok);
+        }
         tv[tv_id].setOnTouchListener(new View.OnTouchListener() {
             float lastX = 0, lastY = 0;
 
