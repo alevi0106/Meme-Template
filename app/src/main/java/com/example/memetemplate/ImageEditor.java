@@ -10,33 +10,25 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -49,9 +41,8 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
     ImageView imView;
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
     Bitmap final_image;
-    TextView[] tv = new TextView[100];
-    static int tv_id = 0;
-    FrameLayout canvas;
+    FrameLayout image_editor;
+    StickerTextView tv_sticker;
     RelativeLayout.LayoutParams params;
     ImageButton add_text_btn;
     int btn_state = 0;
@@ -59,7 +50,7 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_editor);
-        canvas = findViewById(R.id.image_editor_layout);
+        image_editor = findViewById(R.id.image_editor_layout);
         params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         imView = findViewById(R.id.imageView);
@@ -69,9 +60,7 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         imView.setImageBitmap(bmp);
         final_image = ((BitmapDrawable)imView.getDrawable()).getBitmap();
-        StickerTextView tv_sticker = new StickerTextView(ImageEditor.this);
-        tv_sticker.setText("nkDroid");
-        canvas.addView(tv_sticker);
+        tv_sticker = new StickerTextView(ImageEditor.this);
 
         add_text_btn = findViewById(R.id.add_text);
         add_text_btn.setOnClickListener(new View.OnClickListener() {
@@ -83,33 +72,15 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
                 }
                 else if(btn_state == 1){
                     btn_state = 0;
-                    Bitmap bmp = ((BitmapDrawable)imView.getDrawable()).getBitmap();
-                    Bitmap temp = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), Bitmap.Config.RGB_565);
-                    Canvas tCanvas = new Canvas(temp);
-                    tCanvas.drawBitmap(bmp, 0, 0, null);
-//                    int[] location = new int[2];
-//                    tv[tv_id].getLocationOnScreen(location);
-//                    int x = location[0];
-//                    tv[tv_id].setDrawingCacheEnabled(true);
-//                    Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-//                    p.setStyle(Paint.Style.FILL);
-//                    p.setColor(Color.BLACK);
-//                    p.setTextSize(20);
-//                    Bitmap bmpText = Bitmap.createBitmap(tv[tv_id].getDrawingCache());
-//                    tCanvas.drawBitmap(bmpText, x, 0,p);
-//                    Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-//                    p.setStyle(Paint.Style.FILL);
-//                    p.setColor(Color.WHITE);
-//                    p.setTextSize(20);
-//                    Rect rectText = new Rect();
-//                    String caption = tv[tv_id].getText().toString();
-//                    p.getTextBounds(caption, 0, caption.length(), rectText);
-//                    int[] location = new int[2];
-//                    location[0] = (int) imView.getRight();
-//                    location[1] = (int) imView.getBottom();
-//                    Toast.makeText(ImageEditor.this,"Image X:"+String.valueOf(location[0])+"Y:"+String.valueOf(location[1]),Toast.LENGTH_SHORT).show();
-//                    tCanvas.drawText(caption, 0, rectText.height(), p);
+                    tv_sticker.setControlItemsHidden(true);
+                    Bitmap image = Bitmap.createBitmap(image_editor.getWidth(),  image_editor.getHeight(), Bitmap.Config.RGB_565);
+                    image_editor.draw(new Canvas(image));
+                    int height = (int)(final_image.getHeight()*imView.getWidth()/final_image.getWidth());
+                    int top = (int)(imView.getHeight()/2 - height/2);
+                    Bitmap temp = Bitmap.createBitmap(image, 0, top, image.getWidth(), height);
                     imView.setImageBitmap(temp);
+                    final_image = temp;
+                    image_editor.removeView(tv_sticker);
                     add_text_btn.setImageResource(R.drawable.round_text);
                 }
             }
@@ -182,6 +153,7 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
                     else {
                         saveImage();
                     }
+                    BotttomSheet.set_pixel_value();
                     ImageEditor.super.onBackPressed();
                 }
             });
@@ -290,42 +262,15 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
     @Override
     @SuppressLint("ClickableViewAccessibility")
     public void onTextAdded(String textString){
-        tv_id += 1;
-        tv[tv_id] = new TextView(ImageEditor.this);
-        tv[tv_id].setText(textString);
-        tv[tv_id].setTextSize((float) 20);
-        tv[tv_id].setLayoutParams(params);
-        tv[tv_id].setTypeface(Typeface.DEFAULT_BOLD);
-//        tv[tv_id].setPadding(20, 50, 20, 50);
-        //tv[tv_id].setGravity(Gravity.Left);
-        tv[tv_id].setTextColor(getResources().getColor(R.color.colorPrimary));
-        canvas.addView(tv[tv_id]);
-        if(btn_state == 0){
+        if(btn_state == 0 && !textString.matches("")){
+            tv_sticker.setText(textString);
+            tv_sticker.setControlItemsHidden(false);
+            String[] lines = textString.split("[\n|\r]");
+            tv_sticker.setNumberOfLines(lines.length);
+//            Toast.makeText(this,lines.toString(), Toast.LENGTH_SHORT).show();
+            image_editor.addView(tv_sticker);
             btn_state = 1;
             add_text_btn.setImageResource(R.drawable.round_ok);
         }
-        tv[tv_id].setOnTouchListener(new View.OnTouchListener() {
-            float lastX = 0, lastY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case (MotionEvent.ACTION_DOWN):
-                        lastX = event.getX();
-                        lastY = event.getY();
-
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        float dx = event.getX() - lastX;
-                        float dy = event.getY() - lastY;
-                        float finalX = v.getX() + dx;
-                        float finalY = v.getY() + dy + v.getHeight();
-                        v.setX(finalX);
-                        v.setY(finalY);
-                        break;
-                }
-                return true;
-            }
-        });
     }
 }

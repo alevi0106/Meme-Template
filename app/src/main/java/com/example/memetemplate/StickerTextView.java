@@ -31,11 +31,10 @@ public class StickerTextView extends StickerView{
 
         tv_main = new AutoResizeTextView(getContext());
         //tv_main.setTextSize(22);
-        tv_main.setTextColor(Color.WHITE);
-        tv_main.setGravity(Gravity.CENTER);
-        tv_main.setTextSize(400);
-        tv_main.setShadowLayer(4, 0, 0, Color.BLACK);
-        tv_main.setMaxLines(1);
+        tv_main.setTextColor(Color.BLACK);
+        tv_main.setGravity(Gravity.LEFT);
+        tv_main.setTextSize(250);
+        //tv_main.setShadowLayer(4, 0, 0, Color.BLACK);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -50,6 +49,11 @@ public class StickerTextView extends StickerView{
     public void setText(String text){
         if(tv_main!=null)
             tv_main.setText(text);
+    }
+
+    public void setNumberOfLines(int lines){
+        if(tv_main!=null)
+            tv_main.setMaxLines(lines);
     }
 
     public String getText(){

@@ -17,7 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 public abstract class StickerView extends FrameLayout{
-    public static final String TAG = "com.example.memetemplate";
+    public static final String TAG = "com.ex.memetemplate";
     private BorderView iv_border;
     private ImageView iv_scale;
     private ImageView iv_delete;
