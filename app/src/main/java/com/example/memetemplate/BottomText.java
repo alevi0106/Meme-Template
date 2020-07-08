@@ -1,15 +1,20 @@
 package com.example.memetemplate;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class BottomText extends BottomSheetDialogFragment {
@@ -33,6 +38,21 @@ public class BottomText extends BottomSheetDialogFragment {
     }
     public interface BottomTextListener {
         void onTextAdded(String textString);
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState){
+        BottomSheetDialog bottomSheetDialog=(BottomSheetDialog)super.onCreateDialog(savedInstanceState);
+        bottomSheetDialog.setOnShowListener(dialog -> {
+            BottomSheetDialog dialogc = (BottomSheetDialog) dialog;
+            // When using AndroidX the resource can be found at com.google.android.material.R.id.design_bottom_sheet
+            FrameLayout bottomSheet =  dialogc.findViewById( com.google.android.material.R.id.design_bottom_sheet);
+            BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+            bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        });
+        return bottomSheetDialog;
+
     }
     @Override
     public void onAttach(Context context) {

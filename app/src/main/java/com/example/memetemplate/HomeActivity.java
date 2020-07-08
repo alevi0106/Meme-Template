@@ -56,8 +56,8 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
         mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("01A52AC1C81DB7346FE6FCABE563A6B0").build();
+        AdRequest adRequest = new AdRequest.Builder().build();
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("01A52AC1C81DB7346FE6FCABE563A6B0").build();
         mAdView.loadAd(adRequest);
         ActionBar actionBar = getSupportActionBar();
         //set title

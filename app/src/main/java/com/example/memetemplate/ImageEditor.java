@@ -266,7 +266,7 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
             tv_sticker.setText(textString);
             tv_sticker.setControlItemsHidden(false);
             String[] lines = textString.split("[\n|\r]");
-            tv_sticker.setNumberOfLines(lines.length);
+            tv_sticker.setNumberOfLines(lines.length+1);
 //            Toast.makeText(this,lines.toString(), Toast.LENGTH_SHORT).show();
             image_editor.addView(tv_sticker);
             btn_state = 1;

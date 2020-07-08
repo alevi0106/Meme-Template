@@ -4,10 +4,18 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:padding="25dp">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        android:id="@+id/above_line"
+        android:background="@color/colorPrimaryDark"
+        />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Top Border: "
+        android:layout_below="@+id/above_line"
         android:id="@+id/TopText"
         android:textStyle="bold"
         android:textColor="@color/colorAccent"
@@ -18,13 +26,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/TopTextValue"
         android:layout_toRightOf="@+id/TopText"
+        android:layout_below="@+id/above_line"
         android:textStyle="bold"
         android:textColor="@color/colorAccent"
         android:textSize="20sp" />
     <SeekBar
         android:id="@+id/top_seek_bar"
         android:layout_below="@+id/TopText"
-        android:layout_width="280dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
@@ -53,11 +62,18 @@
     <SeekBar
         android:id="@+id/bottom_seek_bar"
         android:layout_below="@+id/BottomText"
-        android:layout_width="280dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="5dp"
         android:max ="15"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/bottom_seek_bar"
+        android:background="@color/colorPrimaryDark"
         />
 </RelativeLayout>

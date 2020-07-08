@@ -2,6 +2,7 @@ package com.example.memetemplate;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -32,14 +33,16 @@ public class StickerTextView extends StickerView{
         tv_main = new AutoResizeTextView(getContext());
         //tv_main.setTextSize(22);
         tv_main.setTextColor(Color.BLACK);
-        tv_main.setGravity(Gravity.LEFT);
-        tv_main.setTextSize(250);
+        tv_main.setGravity(Gravity.CENTER_VERTICAL);
+        tv_main.setTypeface(null, Typeface.BOLD);
+        tv_main.setTextSize(100);
+        tv_main.setMaxEms(20);
         //tv_main.setShadowLayer(4, 0, 0, Color.BLACK);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        params.gravity = Gravity.CENTER;
+        params.gravity = Gravity.LEFT;
         tv_main.setLayoutParams(params);
         if(getImageViewFlip()!=null)
             getImageViewFlip().setVisibility(View.GONE);

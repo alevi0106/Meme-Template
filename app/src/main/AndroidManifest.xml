@@ -17,8 +17,11 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ImageEditor"
+            android:screenOrientation="nosensor"
+            />
+        <activity
+            android:name=".InternetActivity"
             android:screenOrientation="nosensor"/>
-        <activity android:name=".InternetActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
