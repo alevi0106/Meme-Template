@@ -38,7 +38,8 @@
             android:value="ca-app-pub-5927404019629973~1333902122" />
 
         <activity android:name=".HomeActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
