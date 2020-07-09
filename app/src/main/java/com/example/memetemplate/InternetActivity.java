@@ -20,15 +20,15 @@ public class InternetActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_internet);
-        Button reload_button = (Button) findViewById(R.id.reload_btn);
+        Button reload_button = findViewById(R.id.reload_btn);
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
         mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("01A52AC1C81DB7346FE6FCABE563A6B0").build();
+        AdRequest adRequest = new AdRequest.Builder().build();
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("01A52AC1C81DB7346FE6FCABE563A6B0").build();
         mAdView.loadAd(adRequest);
         reload_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

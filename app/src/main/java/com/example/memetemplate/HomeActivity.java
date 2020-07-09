@@ -1,21 +1,16 @@
 package com.example.memetemplate;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import android.view.Menu;
@@ -44,7 +39,7 @@ public class HomeActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mRef;
-    private AdView mAdView;
+    AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +54,6 @@ public class HomeActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
 //                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("01A52AC1C81DB7346FE6FCABE563A6B0").build();
         mAdView.loadAd(adRequest);
-        ActionBar actionBar = getSupportActionBar();
         //set title
         mSharedPref = getSharedPreferences("SortSettings", MODE_PRIVATE);
         String mSorting = mSharedPref.getString("Sort", "newest"); //where if no settingsis selected newest will be default
@@ -115,7 +109,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //convert string entered in SearchView to lowercase
         String query = searchText.toUpperCase();
-
+//        Query firebaseSearchQuery = mRef.orderByChild("search").startAt("%${query}%").endAt(query + "\uf8ff");
         Query firebaseSearchQuery = mRef.orderByChild("search").startAt(query).endAt(query + "\uf8ff");
 
         FirebaseRecyclerAdapter<Model, ViewHolder> firebaseRecyclerAdapter =
