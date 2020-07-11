@@ -1,4 +1,4 @@
-package com.example.memetemplate;
+package com.teenengineer.memetemplate;
 
 public class Model {
 

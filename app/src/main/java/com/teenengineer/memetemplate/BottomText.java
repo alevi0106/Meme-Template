@@ -1,4 +1,4 @@
-package com.example.memetemplate;
+package com.teenengineer.memetemplate;
 
 import android.app.Dialog;
 import android.content.Context;

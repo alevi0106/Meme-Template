@@ -1,4 +1,4 @@
-package com.example.memetemplate;
+package com.teenengineer.memetemplate;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -147,13 +147,14 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
                         }
                         else {
                             saveImage();
+                            ImageEditor.super.onBackPressed();
                         }
                     }
                     else {
                         saveImage();
+                        ImageEditor.super.onBackPressed();
                     }
                     BotttomSheet.set_pixel_value();
-                    ImageEditor.super.onBackPressed();
                 }
             });
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

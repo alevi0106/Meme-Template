@@ -1,4 +1,4 @@
-package com.example.memetemplate.util;
+package com.teenengineer.memetemplate.util;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
@@ -10,7 +10,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.SparseIntArray;
 import android.util.TypedValue;
-import android.widget.TextView;
 
 public class AutoResizeTextView extends androidx.appcompat.widget.AppCompatTextView {
     private interface SizeTester {

@@ -1,4 +1,4 @@
-package com.example.memetemplate;
+package com.teenengineer.memetemplate;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.example.memetemplate.util.AutoResizeTextView;
+import com.teenengineer.memetemplate.util.AutoResizeTextView;
 
 public class StickerTextView extends StickerView{
     private AutoResizeTextView tv_main;

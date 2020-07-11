@@ -1,4 +1,4 @@
-package com.example.memetemplate;
+package com.teenengineer.memetemplate;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;

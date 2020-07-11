@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:712011697310:android:2e831f7f8036f1b7ea7f8f",
         "android_client_info": {
-          "package_name": "com.example.memetemplate"
+          "package_name": "com.teenengineer.memetemplate"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "712011697310-ah7rruakfj9jkc05h1064vp33a2bg96h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.memetemplate",
+            "package_name": "com.teenengineer.memetemplate",
             "certificate_hash": "ea77e08746e02e6588d5f922fb1f26242cf24286"
           }
         },

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.memetemplate">
+    package="com.teenengineer.memetemplate">
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- External storage permission -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Wallpaper permission -->
@@ -16,16 +16,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ImageEditor"
+            android:name="com.teenengineer.memetemplate.ImageEditor"
             android:screenOrientation="nosensor"
             />
         <activity
-            android:name=".InternetActivity"
+            android:name="com.teenengineer.memetemplate.InternetActivity"
             android:screenOrientation="nosensor"/>
-
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.memetemplate.provider"
+            android:authorities="com.teenengineer.memetemplate.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -37,8 +36,8 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-5927404019629973~1333902122" />
 
-        <activity android:name=".HomeActivity" />
-        <activity android:name=".MainActivity"
+        <activity android:name="com.teenengineer.memetemplate.HomeActivity" />
+        <activity android:name="com.teenengineer.memetemplate.MainActivity"
             android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
