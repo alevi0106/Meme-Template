@@ -35,7 +35,7 @@ public class StickerTextView extends StickerView{
         tv_main.setTextColor(Color.BLACK);
         tv_main.setGravity(Gravity.CENTER_VERTICAL);
         tv_main.setTypeface(null, Typeface.BOLD);
-        tv_main.setTextSize(100);
+        tv_main.setTextSize(75);
         tv_main.setMaxEms(20);
         //tv_main.setShadowLayer(4, 0, 0, Color.BLACK);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(

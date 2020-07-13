@@ -30,6 +30,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -75,6 +78,8 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
                     Bitmap image = Bitmap.createBitmap(image_editor.getWidth(),  image_editor.getHeight(), Bitmap.Config.RGB_565);
                     image_editor.draw(new Canvas(image));
                     int height = (final_image.getHeight()*imView.getWidth()/final_image.getWidth());
+                    if(height > imView.getHeight())
+                        height = imView.getHeight();
                     int top = (imView.getHeight()/2 - height/2);
                     Bitmap temp = Bitmap.createBitmap(image, 0, top, image.getWidth(), height);
                     imView.setImageBitmap(temp);
