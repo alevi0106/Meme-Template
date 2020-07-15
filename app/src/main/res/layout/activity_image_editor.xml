@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorAccent"
     tools:context=".ImageEditor"
+
     android:layout_above="@+id/adView"
     android:id="@+id/image_editor_layout">
     <ImageView

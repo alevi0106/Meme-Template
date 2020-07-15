@@ -74,17 +74,22 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
                 }
                 else if(btn_state == 1){
                     btn_state = 0;
+                    add_text_btn.setVisibility(View.GONE);
                     tv_sticker.setControlItemsHidden(true);
                     Bitmap image = Bitmap.createBitmap(image_editor.getWidth(),  image_editor.getHeight(), Bitmap.Config.RGB_565);
                     image_editor.draw(new Canvas(image));
                     int height = (final_image.getHeight()*imView.getWidth()/final_image.getWidth());
-                    if(height > imView.getHeight())
+                    int width = image.getWidth();
+                    int left = 0;
+                    if(height > imView.getHeight()){
                         height = imView.getHeight();
+                    }
                     int top = (imView.getHeight()/2 - height/2);
-                    Bitmap temp = Bitmap.createBitmap(image, 0, top, image.getWidth(), height);
+                    Bitmap temp = Bitmap.createBitmap(image, left, top, width, height);
                     imView.setImageBitmap(temp);
                     final_image = temp;
                     image_editor.removeView(tv_sticker);
+                    add_text_btn.setVisibility(View.VISIBLE);
                     add_text_btn.setImageResource(R.drawable.round_text);
                 }
             }
