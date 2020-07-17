@@ -195,7 +195,7 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(Intent.EXTRA_TEXT, s); // put the text
-            intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(this,"com.example.memetemplate.provider", file));
+            intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(this,"com.teenengineer.memetemplate.provider", file));
             intent.setType("image/png");
             startActivity(Intent.createChooser(intent, "Share via"));
         }

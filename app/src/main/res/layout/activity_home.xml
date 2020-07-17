@@ -15,6 +15,18 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"/>
 
+    <ImageButton
+        android:id="@+id/add_image"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_above="@+id/adView"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/round_btn"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_add_image" />
+
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"

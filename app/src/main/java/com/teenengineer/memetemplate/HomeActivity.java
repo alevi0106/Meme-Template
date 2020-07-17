@@ -5,18 +5,24 @@ import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -40,6 +46,7 @@ public class HomeActivity extends AppCompatActivity {
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mRef;
     AdView mAdView;
+    ImageButton add_image_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +88,13 @@ public class HomeActivity extends AppCompatActivity {
             //send Query to FirebaseDatabase
             mFirebaseDatabase = FirebaseDatabase.getInstance();
             mRef = mFirebaseDatabase.getReference("Data");
+            add_image_btn = findViewById(R.id.add_image);
+            add_image_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    selectImage(HomeActivity.this);
+                }
+            });
         }
         else{
             Intent intent = new Intent(HomeActivity.this, InternetActivity.class);
@@ -312,6 +326,86 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
         builder.show();
+    }
+
+    private void selectImage(Context context) {
+        final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Choose your profile picture");
+
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+
+                if (options[item].equals("Take Photo")) {
+                    Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(takePicture, 0);
+
+                } else if (options[item].equals("Choose from Gallery")) {
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(pickPhoto , 1);
+
+                } else if (options[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_CANCELED) {
+            switch (requestCode) {
+                case 0:
+                    if (resultCode == RESULT_OK && data != null) {
+                        Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
+                        Bitmap mBitmap = getResizedBitmap(selectedImage, 720);
+//                        imageView.setImageBitmap(selectedImage);
+                        Intent intent = new Intent(HomeActivity.this, ImageEditor.class);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] bytes = stream.toByteArray();
+                        intent.putExtra("image", bytes); //put bitmap image as array of bytes
+                        intent.putExtra("title", "Custom Meme"); // put title
+                        //intent.putExtra("description", mDesc); //put description
+                        startActivity(intent); //start activity
+                    }
+
+                    break;
+                case 1:
+                    if (resultCode == RESULT_OK && data != null) {
+                        Uri selectedImage = data.getData();
+                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                        if (selectedImage != null) {
+                            Cursor cursor = getContentResolver().query(selectedImage,
+                                    filePathColumn, null, null, null);
+                            if (cursor != null) {
+                                cursor.moveToFirst();
+                                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                                String picturePath = cursor.getString(columnIndex);
+//                                imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                                Bitmap bmpImage = BitmapFactory.decodeFile(picturePath);
+                                Bitmap mBitmap = getResizedBitmap(bmpImage, 720);
+                                Intent intent = new Intent(HomeActivity.this, ImageEditor.class);
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                byte[] bytes = stream.toByteArray();
+                                intent.putExtra("image", bytes); //put bitmap image as array of bytes
+                                intent.putExtra("title", "Custom Meme"); // put title
+                                //intent.putExtra("description", mDesc); //put description
+                                startActivity(intent); //start activity
+                                cursor.close();
+                            }
+                        }
+
+                    }
+                    break;
+            }
+        }
     }
 
     @Override
