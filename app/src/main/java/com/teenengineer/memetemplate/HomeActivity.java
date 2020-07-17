@@ -5,16 +5,19 @@ import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.provider.MediaStore;
@@ -47,6 +50,7 @@ public class HomeActivity extends AppCompatActivity {
     DatabaseReference mRef;
     AdView mAdView;
     ImageButton add_image_btn;
+    private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +96,18 @@ public class HomeActivity extends AppCompatActivity {
             add_image_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    selectImage(HomeActivity.this);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+                            String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                            requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
+                        }
+                        else {
+                            selectImage(HomeActivity.this);
+                        }
+                    }
+                    else {
+                        selectImage(HomeActivity.this);
+                    }
                 }
             });
         }
