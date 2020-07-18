@@ -30,9 +30,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -65,33 +62,30 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         tv_sticker = new StickerTextView(ImageEditor.this);
 
         add_text_btn = findViewById(R.id.add_text);
-        add_text_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(btn_state == 0) {
-                    BottomText bottomText = new BottomText();
-                    bottomText.show(getSupportFragmentManager(), "Bottom Text");
+        add_text_btn.setOnClickListener(view -> {
+            if(btn_state == 0) {
+                BottomText bottomText = new BottomText();
+                bottomText.show(getSupportFragmentManager(), "Bottom Text");
+            }
+            else if(btn_state == 1){
+                btn_state = 0;
+                add_text_btn.setVisibility(View.GONE);
+                tv_sticker.setControlItemsHidden(true);
+                Bitmap image = Bitmap.createBitmap(image_editor.getWidth(),  image_editor.getHeight(), Bitmap.Config.RGB_565);
+                image_editor.draw(new Canvas(image));
+                int height = (final_image.getHeight()*imView.getWidth()/final_image.getWidth());
+                int width = image.getWidth();
+                int left = 0;
+                if(height > imView.getHeight()){
+                    height = imView.getHeight();
                 }
-                else if(btn_state == 1){
-                    btn_state = 0;
-                    add_text_btn.setVisibility(View.GONE);
-                    tv_sticker.setControlItemsHidden(true);
-                    Bitmap image = Bitmap.createBitmap(image_editor.getWidth(),  image_editor.getHeight(), Bitmap.Config.RGB_565);
-                    image_editor.draw(new Canvas(image));
-                    int height = (final_image.getHeight()*imView.getWidth()/final_image.getWidth());
-                    int width = image.getWidth();
-                    int left = 0;
-                    if(height > imView.getHeight()){
-                        height = imView.getHeight();
-                    }
-                    int top = (imView.getHeight()/2 - height/2);
-                    Bitmap temp = Bitmap.createBitmap(image, left, top, width, height);
-                    imView.setImageBitmap(temp);
-                    final_image = temp;
-                    image_editor.removeView(tv_sticker);
-                    add_text_btn.setVisibility(View.VISIBLE);
-                    add_text_btn.setImageResource(R.drawable.round_text);
-                }
+                int top = (imView.getHeight()/2 - height/2);
+                Bitmap temp = Bitmap.createBitmap(image, left, top, width, height);
+                imView.setImageBitmap(temp);
+                final_image = temp;
+                image_editor.removeView(tv_sticker);
+                add_text_btn.setVisibility(View.VISIBLE);
+                add_text_btn.setImageResource(R.drawable.round_text);
             }
         });
 
@@ -102,33 +96,29 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setMessage("Discard Changes?");
-        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                            PackageManager.PERMISSION_DENIED){
-                        String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                        //show popup to grant permission
-                        requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
-                    }
-                    else {
-                        //permission already granted, save image
-                        saveImage();
-                    }
+        builder.setPositiveButton("Save", (dialog, id) -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                        PackageManager.PERMISSION_DENIED){
+                    String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    //show popup to grant permission
+                    requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
                 }
                 else {
-                    //System os is < marshmallow, save image
+                    //permission already granted, save image
                     saveImage();
                 }
-                BotttomSheet.set_pixel_value();
-                ImageEditor.super.onBackPressed();
             }
+            else {
+                //System os is < marshmallow, save image
+                saveImage();
+            }
+            BotttomSheet.set_pixel_value();
+            ImageEditor.super.onBackPressed();
         });
-        builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                BotttomSheet.set_pixel_value();
-                ImageEditor.super.onBackPressed();
-            }
+        builder.setNegativeButton("Discard", (dialog, id) -> {
+            BotttomSheet.set_pixel_value();
+            ImageEditor.super.onBackPressed();
         });
         builder.show();
     }

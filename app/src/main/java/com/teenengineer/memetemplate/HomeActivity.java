@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -35,12 +35,17 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.android.play.core.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import java.io.ByteArrayOutputStream;
+import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity {
     LinearLayoutManager mLayoutManager; //for sorting
@@ -51,15 +56,13 @@ public class HomeActivity extends AppCompatActivity {
     AdView mAdView;
     ImageButton add_image_btn;
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
+    private int REQUEST_CODE = 11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
+        MobileAds.initialize(this, initializationStatus -> {
         });
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -69,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
         mSharedPref = getSharedPreferences("SortSettings", MODE_PRIVATE);
         String mSorting = mSharedPref.getString("Sort", "newest"); //where if no settingsis selected newest will be default
 
+        assert mSorting != null;
         if (mSorting.equals("newest")) {
             mLayoutManager = new LinearLayoutManager(this);
             //this will load the items from bottom means newest first
@@ -92,22 +96,81 @@ public class HomeActivity extends AppCompatActivity {
             //send Query to FirebaseDatabase
             mFirebaseDatabase = FirebaseDatabase.getInstance();
             mRef = mFirebaseDatabase.getReference("Data");
+
+            FirebaseRecyclerAdapter<Model, ViewHolder> firebaseRecyclerAdapter =
+                    new FirebaseRecyclerAdapter<Model, ViewHolder>(
+                            Model.class,
+                            R.layout.row,
+                            ViewHolder.class,
+                            mRef
+                    ) {
+                        @Override
+                        protected void populateViewHolder(ViewHolder viewHolder, Model model, int position) {
+                            viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage());
+                        }
+
+                        @Override
+                        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+                            ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
+
+                            viewHolder.setOnClickListener(new ViewHolder.ClickListener() {
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    try{
+                                        //Views
+                                        TextView mTitleTv = view.findViewById(R.id.rTitleTv);
+                                        //TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
+                                        ImageView mImageView = view.findViewById(R.id.rImageView);
+                                        //get data from views
+                                        String mTitle = mTitleTv.getText().toString();
+                                        //String mDesc = mDescTv.getText().toString();
+                                        Drawable mDrawable = mImageView.getDrawable();
+                                        Bitmap mBit = ((BitmapDrawable) mDrawable).getBitmap();
+                                        Bitmap mBitmap = getResizedBitmap(mBit, 500);
+                                        //pass this data to new activity
+                                        Intent intent = new Intent(view.getContext(), ImageEditor.class);
+                                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                        byte[] bytes = stream.toByteArray();
+                                        intent.putExtra("image", bytes); //put bitmap image as array of bytes
+                                        intent.putExtra("title", mTitle); // put title
+                                        //intent.putExtra("description", mDesc); //put description
+                                        startActivity(intent); //start activity
+                                    }
+                                    catch(Exception e){
+                                        Toast.makeText(HomeActivity.this, "Wait for image to load!", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+
+                                @Override
+                                public void onItemLongClick(View view, int position) {
+                                    //TODO do your own implementaion on long item click
+                                }
+                            });
+
+                            return viewHolder;
+                        }
+
+                    };
+
+            //set adapter to recyclerview
+            mRecyclerView.setAdapter(firebaseRecyclerAdapter);
+
             add_image_btn = findViewById(R.id.add_image);
-            add_image_btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-                            String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                            requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
-                        }
-                        else {
-                            selectImage(HomeActivity.this);
-                        }
+            add_image_btn.setOnClickListener(view -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+                        String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
                     }
                     else {
                         selectImage(HomeActivity.this);
                     }
+                }
+                else {
+                    selectImage(HomeActivity.this);
                 }
             });
         }
@@ -202,73 +265,25 @@ public class HomeActivity extends AppCompatActivity {
 
         //set adapter to recyclerview
         mRecyclerView.setAdapter(firebaseRecyclerAdapter);
-    }
 
+        AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(HomeActivity.this);
 
-    //load data into recycler view onStart
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseRecyclerAdapter<Model, ViewHolder> firebaseRecyclerAdapter =
-                new FirebaseRecyclerAdapter<Model, ViewHolder>(
-                        Model.class,
-                        R.layout.row,
-                        ViewHolder.class,
-                        mRef
-                ) {
-                    @Override
-                    protected void populateViewHolder(ViewHolder viewHolder, Model model, int position) {
-                        viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage());
-                    }
+// Returns an intent object that you use to check for an update.
+        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
 
-                    @Override
-                    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-                        ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
-
-                        viewHolder.setOnClickListener(new ViewHolder.ClickListener() {
-                            @Override
-                            public void onItemClick(View view, int position) {
-                                try{
-                                    //Views
-                                    TextView mTitleTv = view.findViewById(R.id.rTitleTv);
-                                    //TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
-                                     ImageView mImageView = view.findViewById(R.id.rImageView);
-                                    //get data from views
-                                    String mTitle = mTitleTv.getText().toString();
-                                    //String mDesc = mDescTv.getText().toString();
-                                    Drawable mDrawable = mImageView.getDrawable();
-                                    Bitmap mBit = ((BitmapDrawable) mDrawable).getBitmap();
-                                    Bitmap mBitmap = getResizedBitmap(mBit, 500);
-                                    //pass this data to new activity
-                                    Intent intent = new Intent(view.getContext(), ImageEditor.class);
-                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                    mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                    byte[] bytes = stream.toByteArray();
-                                    intent.putExtra("image", bytes); //put bitmap image as array of bytes
-                                    intent.putExtra("title", mTitle); // put title
-                                    //intent.putExtra("description", mDesc); //put description
-                                    startActivity(intent); //start activity
-                                }
-                                catch(Exception e){
-                                    Toast.makeText(HomeActivity.this, "Wait for image to load!", Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-
-                            @Override
-                            public void onItemLongClick(View view, int position) {
-                                //TODO do your own implementaion on long item click
-                            }
-                        });
-
-                        return viewHolder;
-                    }
-
-                };
-
-        //set adapter to recyclerview
-        mRecyclerView.setAdapter(firebaseRecyclerAdapter);
+// Checks that the platform will allow the specified type of update.
+        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                    // For a flexible update, use AppUpdateType.FLEXIBLE
+                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                // Request the update.
+                try {
+                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.FLEXIBLE, HomeActivity.this, REQUEST_CODE);
+                } catch (IntentSender.SendIntentException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 
@@ -316,27 +331,24 @@ public class HomeActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Sort by") //set title
                 .setIcon(R.drawable.ic_action_sort) //set icon
-                .setItems(sortOptions, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // The 'which' argument contains the index position of the selected item
-                        // 0 means "Newest" and 1 means "oldest"
-                        if (which == 0) {
-                            //sort by newest
+                .setItems(sortOptions, (dialog, which) -> {
+                    // The 'which' argument contains the index position of the selected item
+                    // 0 means "Newest" and 1 means "oldest"
+                    if (which == 0) {
+                        //sort by newest
+                        //Edit our shared preferences
+                        SharedPreferences.Editor editor = mSharedPref.edit();
+                        editor.putString("Sort", "newest"); //where 'Sort' is key & 'newest' is value
+                        editor.apply(); // apply/save the value in our shared preferences
+                        recreate(); //restart activity to take effect
+                    } else if (which == 1) {
+                        {
+                            //sort by oldest
                             //Edit our shared preferences
                             SharedPreferences.Editor editor = mSharedPref.edit();
-                            editor.putString("Sort", "newest"); //where 'Sort' is key & 'newest' is value
+                            editor.putString("Sort", "oldest"); //where 'Sort' is key & 'oldest' is value
                             editor.apply(); // apply/save the value in our shared preferences
                             recreate(); //restart activity to take effect
-                        } else if (which == 1) {
-                            {
-                                //sort by oldest
-                                //Edit our shared preferences
-                                SharedPreferences.Editor editor = mSharedPref.edit();
-                                editor.putString("Sort", "oldest"); //where 'Sort' is key & 'oldest' is value
-                                editor.apply(); // apply/save the value in our shared preferences
-                                recreate(); //restart activity to take effect
-                            }
                         }
                     }
                 });
@@ -349,22 +361,18 @@ public class HomeActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose your profile picture");
 
-        builder.setItems(options, new DialogInterface.OnClickListener() {
+        builder.setItems(options, (dialog, item) -> {
 
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
+            if (options[item].equals("Take Photo")) {
+                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePicture, 0);
 
-                if (options[item].equals("Take Photo")) {
-                    Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(takePicture, 0);
+            } else if (options[item].equals("Choose from Gallery")) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto , 1);
 
-                } else if (options[item].equals("Choose from Gallery")) {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto , 1);
-
-                } else if (options[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
+            } else if (options[item].equals("Cancel")) {
+                dialog.dismiss();
             }
         });
         builder.show();
@@ -377,7 +385,8 @@ public class HomeActivity extends AppCompatActivity {
             switch (requestCode) {
                 case 0:
                     if (resultCode == RESULT_OK && data != null) {
-                        Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
+                        Bitmap selectedImage = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
+                        assert selectedImage != null;
                         Bitmap mBitmap = getResizedBitmap(selectedImage, 720);
 //                        imageView.setImageBitmap(selectedImage);
                         Intent intent = new Intent(HomeActivity.this, ImageEditor.class);
@@ -428,14 +437,8 @@ public class HomeActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setMessage("Are you sure want to exit?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                HomeActivity.super.onBackPressed();
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
+        builder.setPositiveButton("Yes", (dialog, id) -> HomeActivity.super.onBackPressed());
+        builder.setNegativeButton("No", (dialog, id) -> {
         });
         builder.show();
     }
