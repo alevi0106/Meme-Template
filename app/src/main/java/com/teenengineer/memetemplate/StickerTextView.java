@@ -54,6 +54,11 @@ public class StickerTextView extends StickerView{
             tv_main.setText(text);
     }
 
+    public void setTextColor(int color){
+        if(tv_main!=null)
+            tv_main.setTextColor(color);
+    }
+
     public void setNumberOfLines(int lines){
         if(tv_main!=null)
             tv_main.setMaxLines(lines);

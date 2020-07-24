@@ -21,6 +21,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -240,13 +241,13 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
     }
 
     @Override
-    public void onSeekbarChanged(int top_progress, int bottom_progress) {
+    public void onSeekbarChanged(int top_progress, int bottom_progress, int color) {
         byte[] bytes = getIntent().getByteArrayExtra("image");
         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         Paint p = new Paint();
         p.setAntiAlias(true);
         p.setStyle(Paint.Style.FILL);
-        p.setColor(Color.WHITE);
+        p.setColor(color);
         top_progress *= 10;
         bottom_progress *= 10;
         Bitmap temp = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight()+top_progress+bottom_progress, Bitmap.Config.RGB_565);
@@ -261,9 +262,10 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
 
     @Override
     @SuppressLint("ClickableViewAccessibility")
-    public void onTextAdded(String textString){
+    public void onTextAdded(String textString, int color){
         if(btn_state == 0 && !textString.matches("")){
             tv_sticker.setText(textString);
+            tv_sticker.setTextColor(color);
             tv_sticker.setControlItemsHidden(false);
             String[] lines = textString.split("[\n|\r]");
             tv_sticker.setNumberOfLines(lines.length+1);

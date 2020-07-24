@@ -413,7 +413,7 @@ public class HomeActivity extends AppCompatActivity {
                                 String picturePath = cursor.getString(columnIndex);
 //                                imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
                                 Bitmap bmpImage = BitmapFactory.decodeFile(picturePath);
-                                Bitmap mBitmap = getResizedBitmap(bmpImage, 720);
+                                Bitmap mBitmap = getResizedBitmap(bmpImage, 600);
                                 Intent intent = new Intent(HomeActivity.this, ImageEditor.class);
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                 mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
