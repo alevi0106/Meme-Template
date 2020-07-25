@@ -31,6 +31,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -39,6 +42,7 @@ import java.util.Locale;
 
 public class ImageEditor extends AppCompatActivity implements BotttomSheet.BottomSheetListener, BottomText.BottomTextListener {
     ImageView imView;
+    AdView mAdView;
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
     Bitmap final_image;
     FrameLayout image_editor;
@@ -61,7 +65,10 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         imView.setImageBitmap(bmp);
         final_image = ((BitmapDrawable)imView.getDrawable()).getBitmap();
         tv_sticker = new StickerTextView(ImageEditor.this);
-
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("01A52AC1C81DB7346FE6FCABE563A6B0").build();
+        mAdView.loadAd(adRequest);
         add_text_btn = findViewById(R.id.add_text);
         add_text_btn.setOnClickListener(view -> {
             if(btn_state == 0) {
