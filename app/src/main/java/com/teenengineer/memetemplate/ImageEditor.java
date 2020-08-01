@@ -8,9 +8,11 @@ import androidx.core.content.FileProvider;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -18,10 +20,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,11 +38,13 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ImageEditor extends AppCompatActivity implements BotttomSheet.BottomSheetListener, BottomText.BottomTextListener {
     ImageView imView;
@@ -47,9 +53,10 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
     Bitmap final_image;
     FrameLayout image_editor;
     StickerTextView tv_sticker;
+    StickerImageView image_sticker;
     RelativeLayout.LayoutParams params;
-    ImageButton add_text_btn;
-    int btn_state = 0;
+    ImageButton add_text_btn, add_image_btn;
+    int btn_state = 0, img_btn_state = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +72,7 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
         imView.setImageBitmap(bmp);
         final_image = ((BitmapDrawable)imView.getDrawable()).getBitmap();
         tv_sticker = new StickerTextView(ImageEditor.this);
+        image_sticker = new StickerImageView(ImageEditor.this);
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
 //                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("01A52AC1C81DB7346FE6FCABE563A6B0").build();
@@ -78,6 +86,7 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
             else if(btn_state == 1){
                 btn_state = 0;
                 add_text_btn.setVisibility(View.GONE);
+                add_image_btn.setVisibility(View.GONE);
                 tv_sticker.setControlItemsHidden(true);
                 Bitmap image = Bitmap.createBitmap(image_editor.getWidth(),  image_editor.getHeight(), Bitmap.Config.RGB_565);
                 image_editor.draw(new Canvas(image));
@@ -93,11 +102,136 @@ public class ImageEditor extends AppCompatActivity implements BotttomSheet.Botto
                 final_image = temp;
                 image_editor.removeView(tv_sticker);
                 add_text_btn.setVisibility(View.VISIBLE);
+                add_image_btn.setVisibility(View.VISIBLE);
                 add_text_btn.setImageResource(R.drawable.round_text);
             }
         });
 
+        add_image_btn = findViewById(R.id.add_image);
+        add_image_btn.setOnClickListener(view -> {
+            if(img_btn_state == 0){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+                        String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
+                    }
+                    else {
+                        selectImage(ImageEditor.this);
+                    }
+                }
+                else {
+                    selectImage(ImageEditor.this);
+                }
+            }
+            else if(img_btn_state == 1){
+                img_btn_state = 0;
+                add_text_btn.setVisibility(View.GONE);
+                add_image_btn.setVisibility(View.GONE);
+                image_sticker.setControlItemsHidden(true);
+                Bitmap image = Bitmap.createBitmap(image_editor.getWidth(),  image_editor.getHeight(), Bitmap.Config.RGB_565);
+                image_editor.draw(new Canvas(image));
+                int height = (final_image.getHeight()*imView.getWidth()/final_image.getWidth());
+                int width = image.getWidth();
+                int left = 0;
+                if(height > imView.getHeight()){
+                    height = imView.getHeight();
+                }
+                int top = (imView.getHeight()/2 - height/2);
+                Bitmap temp = Bitmap.createBitmap(image, left, top, width, height);
+                imView.setImageBitmap(temp);
+                final_image = temp;
+                image_editor.removeView(image_sticker);
+                add_text_btn.setVisibility(View.VISIBLE);
+                add_image_btn.setVisibility(View.VISIBLE);
+                add_image_btn.setImageResource(R.drawable.ic_add_image);
+            }
+        });
+
     }
+
+    private void selectImage(Context context) {
+        final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
+
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
+        builder.setTitle("Add Image");
+
+        builder.setItems(options, (dialog, item) -> {
+
+            if (options[item].equals("Take Photo")) {
+                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePicture, 0);
+
+            } else if (options[item].equals("Choose from Gallery")) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto , 1);
+
+            } else if (options[item].equals("Cancel")) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_CANCELED) {
+            switch (requestCode) {
+                case 0:
+                    if (resultCode == RESULT_OK && data != null) {
+                        Bitmap selectedImage = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
+                        assert selectedImage != null;
+                        Bitmap mBitmap = getResizedBitmap(selectedImage, 600);
+                        image_sticker.setControlItemsHidden(false);
+                        image_sticker.setImageBitmap(mBitmap);
+                        image_editor.addView(image_sticker);
+                        img_btn_state = 1;
+                        add_image_btn.setImageResource(R.drawable.round_ok);
+                    }
+
+                    break;
+                case 1:
+                    if (resultCode == RESULT_OK && data != null) {
+                        Uri selectedImage = data.getData();
+                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                        if (selectedImage != null) {
+                            Cursor cursor = getContentResolver().query(selectedImage,
+                                    filePathColumn, null, null, null);
+                            if (cursor != null) {
+                                cursor.moveToFirst();
+                                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                                String picturePath = cursor.getString(columnIndex);
+                                Bitmap bmpImage = BitmapFactory.decodeFile(picturePath);
+                                Bitmap mBitmap = getResizedBitmap(bmpImage, 600);
+                                image_sticker.setControlItemsHidden(false);
+                                image_sticker.setImageBitmap(mBitmap);
+                                image_editor.addView(image_sticker);
+                                img_btn_state = 1;
+                                add_image_btn.setImageResource(R.drawable.round_ok);
+                            }
+                        }
+
+                    }
+                    break;
+            }
+        }
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
 
     @Override
     public void onBackPressed() {

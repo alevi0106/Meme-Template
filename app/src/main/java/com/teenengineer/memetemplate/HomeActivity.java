@@ -358,7 +358,7 @@ public class HomeActivity extends AppCompatActivity {
         final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Choose your profile picture");
+        builder.setTitle("Create your own MEME");
 
         builder.setItems(options, (dialog, item) -> {
 
@@ -386,7 +386,7 @@ public class HomeActivity extends AppCompatActivity {
                     if (resultCode == RESULT_OK && data != null) {
                         Bitmap selectedImage = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
                         assert selectedImage != null;
-                        Bitmap mBitmap = getResizedBitmap(selectedImage, 720);
+                        Bitmap mBitmap = getResizedBitmap(selectedImage, 600);
 //                        imageView.setImageBitmap(selectedImage);
                         Intent intent = new Intent(HomeActivity.this, ImageEditor.class);
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
